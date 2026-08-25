@@ -712,16 +712,24 @@ document.getElementById('btn-capture').addEventListener('click', ()=>{
   }
   const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  // iOS Safari blocks window.open() unless it happens synchronously inside
+  // the click handler, so open a blank tab now and fill it in once ready.
+  const iosTab = isIOS ? window.open('', '_blank') : null;
   html2canvas(target, {backgroundColor:'#f6f3ee', scale:2}).then(canvas=>{
     canvas.toBlob(blob=>{
       if(!blob){
+        if(iosTab) iosTab.close();
         showToast('캡처에 실패했어요. 다시 시도해주세요.');
         return;
       }
       const url = URL.createObjectURL(blob);
       if(isIOS){
-        window.open(url, '_blank');
-        showToast('새 탭에 이미지가 열렸어요. 길게 눌러 저장해주세요 🍵');
+        if(iosTab){
+          iosTab.location.href = url;
+          showToast('새 탭에 이미지가 열렸어요. 길게 눌러 저장해주세요 🍵');
+        }else{
+          showToast('팝업이 차단됐어요. 팝업 허용 후 다시 시도해주세요.');
+        }
       }else{
         const stamp = new Date().toISOString().slice(0,10);
         const link = document.createElement('a');
@@ -735,6 +743,7 @@ document.getElementById('btn-capture').addEventListener('click', ()=>{
       setTimeout(()=> URL.revokeObjectURL(url), 10000);
     }, 'image/png');
   }).catch(err=>{
+    if(iosTab) iosTab.close();
     console.error('capture failed', err);
     showToast('캡처에 실패했어요. 다시 시도해주세요.');
   });
