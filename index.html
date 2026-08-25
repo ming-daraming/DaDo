@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>다도 기록장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&family=Gaegu:wght@400;700&family=Yeon+Sung&family=Gamja+Flower&family=Dokdo&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ee;
+    --card:#ffffff;
+    --border:#e2ddd2;
+    --border-strong:#c9c1b0;
+    --text:#2c2a24;
+    --text-sub:#797365;
+    --text-muted:#a39c8c;
+    --accent:#6b7a4f;
+    --accent-bg:#eef1e6;
+    --accent-text:#4a5636;
+    --danger:#b5533f;
+    --radius:10px;
+    --font-main:"Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  *{box-sizing:border-box; min-width:0;}
+  body{
+    margin:0;
+    font-family:var(--font-main);
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:60px;
+  }
+  header{
+    padding:20px 16px 12px;
+    text-align:center;
+  }
+  header h1{
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 2px;
+  }
+  header p{
+    font-size:12px;
+    color:var(--text-sub);
+    margin:0;
+  }
+  .wrap{
+    max-width:480px;
+    margin:0 auto;
+    padding:0 14px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .section-title{
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-sub);
+    margin:0 0 10px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .row.two{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  }
+  label{
+    font-size:12px;
+    color:var(--text-muted);
+    display:block;
+    margin-bottom:4px;
+  }
+  input[type=text], input[type=date], select, textarea, button{
+    width:100%;
+    max-width:100%;
+    height:38px;
+    border:1px solid var(--border-strong);
+    border-radius:8px;
+    padding:0 10px;
+    font-size:14px;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  textarea{
+    height:70px;
+    padding:8px 10px;
+    resize:vertical;
+  }
+  select{
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23797365' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    padding-right:28px;
+  }
+  input[type=date]{
+    appearance:none;
+    -webkit-appearance:none;
+    font-size:13.5px;
+  }
+  input[type=date]::-webkit-datetime-edit{
+    padding:0;
+  }
+  input[type=date]::-webkit-calendar-picker-indicator{
+    margin-left:2px;
+    padding:2px;
+  }
+  .chip-group{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .chip{
+    position:relative;
+  }
+  .chip input{
+    position:absolute;
+    opacity:0;
+    width:100%;
+    height:100%;
+    margin:0;
+    cursor:pointer;
+  }
+  .chip span{
+    display:inline-block;
+    padding:6px 12px;
+    font-size:12.5px;
+    border:1px solid var(--border-strong);
+    border-radius:20px;
+    color:var(--text-sub);
+    background:#fff;
+    transition:.12s;
+  }
+  .chip input:checked + span{
+    background:var(--accent-bg);
+    border-color:var(--accent);
+    color:var(--accent-text);
+    font-weight:600;
+  }
+  .slider-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  input[type=range]{
+    flex:1;
+    height:4px;
+  }
+  .slider-val{
+    font-size:13px;
+    font-weight:600;
+    min-width:16px;
+    text-align:center;
+    color:var(--accent-text);
+  }
+  .divider{
+    border-top:1px solid var(--border);
+    margin:14px 0;
+  }
+  button.save{
+    width:100%;
+    height:44px;
+    border:none;
+    border-radius:10px;
+    background:var(--accent);
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  button.save:active{opacity:.85;}
+  .entry-filter{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+    align-items:center;
+  }
+  .entry-filter select{
+    height:34px;
+    font-size:13px;
+  }
+  .entry{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .entry-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:8px;
+  }
+  .entry-title{
+    font-size:14.5px;
+    font-weight:600;
+  }
+  .entry-sub{
+    font-size:12px;
+    color:var(--text-muted);
+    margin-top:2px;
+  }
+  .entry-user{
+    font-size:11px;
+    background:var(--accent-bg);
+    color:var(--accent-text);
+    padding:2px 8px;
+    border-radius:10px;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .entry-tags{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin:6px 0;
+  }
+  .tag{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:20px;
+    background:#f1efe8;
+    color:var(--text-sub);
+  }
+  .entry-grid{
+    font-size:12.5px;
+    color:var(--text-sub);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:4px 10px;
+    margin:8px 0;
+  }
+  .entry-grid b{
+    color:var(--text);
+    font-weight:600;
+  }
+  .entry-note{
+    font-size:13px;
+    color:var(--text);
+    margin-top:6px;
+    white-space:pre-wrap;
+    line-height:1.5;
+  }
+  .del-btn{
+    border:none;
+    background:none;
+    color:var(--text-muted);
+    font-size:12px;
+    cursor:pointer;
+    padding:4px;
+  }
+  .del-btn:active{color:var(--danger);}
+  .empty{
+    text-align:center;
+    color:var(--text-muted);
+    font-size:13px;
+    padding:30px 0;
+  }
+  .err{
+    color:var(--danger);
+    font-size:12px;
+    margin-top:-4px;
+    margin-bottom:10px;
+    display:none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍵 다도 기록장</h1>
+  <p>매번 우린 차의 인상을 기록해요</p>
+</header>
+
+<div class="wrap">
+  <div class="card" style="padding:12px 14px;">
+    <label style="margin-bottom:6px;">글꼴</label>
+    <select id="font-select">
+      <option value="'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">기본체</option>
+      <option value="'Gaegu', var(--font-main)">개구쟁이체</option>
+      <option value="'Yeon Sung', var(--font-main)">연성체</option>
+      <option value="'Gamja Flower', var(--font-main)">감자꽃체</option>
+      <option value="'Dokdo', var(--font-main)">독도체</option>
+      <option value="'Gowun Batang', var(--font-main)">고운바탕체</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <p class="section-title">기본 정보</p>
+    <div class="row two">
+      <div>
+        <label>작성자</label>
+        <input type="text" id="f-user" placeholder="이름 또는 닉네임">
+      </div>
+      <div>
+        <label>날짜</label>
+        <input type="date" id="f-date">
+      </div>
+    </div>
+    <div class="row two">
+      <div>
+        <label>차 종류</label>
+        <select id="f-type">
+          <option value="">선택</option>
+          <option>녹차</option>
+          <option>백차</option>
+          <option>황차</option>
+          <option>청차(우롱차)</option>
+          <option>홍차</option>
+          <option>흑차(보이차)</option>
+          <option>화차</option>
+          <option>기타</option>
+        </select>
+      </div>
+      <div>
+        <label>차 브랜드</label>
+        <input type="text" id="f-brand" placeholder="예: OO다원">
+      </div>
+    </div>
+    <div class="err" id="err-basic">작성자, 날짜, 차 종류는 필수예요.</div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">향 (다중 선택)</p>
+    <div class="chip-group" id="group-aroma">
+      <label class="chip"><input type="checkbox" value="청향"><span>청향</span></label>
+      <label class="chip"><input type="checkbox" value="밀향"><span>밀향</span></label>
+      <label class="chip"><input type="checkbox" value="화향"><span>화향</span></label>
+      <label class="chip"><input type="checkbox" value="과소향"><span>과소향</span></label>
+      <label class="chip"><input type="checkbox" value="연향"><span>연향</span></label>
+      <label class="chip"><input type="checkbox" value="침향"><span>침향</span></label>
+      <label class="chip"><input type="checkbox" value="당향"><span>당향</span></label>
+      <label class="chip"><input type="checkbox" value="초당향"><span>초당향</span></label>
+      <label class="chip"><input type="checkbox" value="진향"><span>진향</span></label>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="section-title">맛 (다중 선택)</p>
+    <div class="chip-group" id="group-taste">
+      <label class="chip"><input type="checkbox" value="단맛"><span>단맛</span></label>
+      <label class="chip"><input type="checkbox" value="쓴맛"><span>쓴맛</span></label>
+      <label class="chip"><input type="checkbox" value="신맛"><span>신맛</span></label>
+      <label class="chip"><input type="checkbox" value="감칠맛"><span>감칠맛</span></label>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">관능 평가</p>
+    <div class="row two">
+      <div>
+        <label>탕색</label>
+        <input type="text" id="f-color" placeholder="예: 밝은 등황색">
+      </div>
+      <div>
+        <label>엽저</label>
+        <input type="text" id="f-yeopjeo" placeholder="예: 균일한 갈색">
+      </div>
+    </div>
+    <div class="row two">
+      <div>
+        <label>질감</label>
+        <input type="text" id="f-texture" placeholder="예: 부드러움">
+      </div>
+      <div>
+        <label>여운(회감)</label>
+        <input type="text" id="f-aftertaste" placeholder="예: 오래 지속됨">
+      </div>
+    </div>
+    <div>
+      <label>떫은 정도</label>
+      <div class="slider-row">
+        <input type="range" id="f-astringency" min="1" max="5" step="1" value="1">
+        <span class="slider-val" id="f-astringency-val">1</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">총평 / 메모</p>
+    <textarea id="f-note" placeholder="전반적인 인상, 재구매 의사 등"></textarea>
+  </div>
+
+  <button class="save" id="btn-save">기록 저장하기</button>
+
+  <div class="divider" style="margin-top:22px;"></div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin:18px 0 10px;">
+    <p class="section-title" style="margin:0;">지난 기록</p>
+    <select id="filter-user" style="width:130px;">
+      <option value="all">전체 보기</option>
+    </select>
+  </div>
+
+  <div id="entry-list"></div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'tea-log-entries-v1';
+
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+function saveEntries(entries){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+document.getElementById('f-date').valueAsDate = new Date();
+
+const FONT_KEY = 'tea-log-font-v1';
+const fontSelect = document.getElementById('font-select');
+const savedFont = localStorage.getItem(FONT_KEY);
+if(savedFont){
+  document.documentElement.style.setProperty('--font-main', savedFont);
+  fontSelect.value = savedFont;
+}
+fontSelect.addEventListener('change', ()=>{
+  document.documentElement.style.setProperty('--font-main', fontSelect.value);
+  localStorage.setItem(FONT_KEY, fontSelect.value);
+});
+
+const astSlider = document.getElementById('f-astringency');
+const astVal = document.getElementById('f-astringency-val');
+astSlider.addEventListener('input', ()=> astVal.textContent = astSlider.value);
+
+function getChecked(groupId){
+  return Array.from(document.querySelectorAll('#' + groupId + ' input:checked')).map(i => i.value);
+}
+
+function resetForm(){
+  document.getElementById('f-brand').value = '';
+  document.getElementById('f-type').value = '';
+  document.getElementById('f-color').value = '';
+  document.getElementById('f-yeopjeo').value = '';
+  document.getElementById('f-texture').value = '';
+  document.getElementById('f-aftertaste').value = '';
+  document.getElementById('f-note').value = '';
+  astSlider.value = 1;
+  astVal.textContent = '1';
+  document.querySelectorAll('#group-aroma input, #group-taste input').forEach(i => i.checked = false);
+}
+
+document.getElementById('btn-save').addEventListener('click', ()=>{
+  const user = document.getElementById('f-user').value.trim();
+  const date = document.getElementById('f-date').value;
+  const type = document.getElementById('f-type').value;
+  const errBox = document.getElementById('err-basic');
+
+  if(!user || !date || !type){
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    user, date, type,
+    brand: document.getElementById('f-brand').value.trim(),
+    aroma: getChecked('group-aroma'),
+    taste: getChecked('group-taste'),
+    color: document.getElementById('f-color').value.trim(),
+    yeopjeo: document.getElementById('f-yeopjeo').value.trim(),
+    texture: document.getElementById('f-texture').value.trim(),
+    aftertaste: document.getElementById('f-aftertaste').value.trim(),
+    astringency: astSlider.value,
+    note: document.getElementById('f-note').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  const entries = loadEntries();
+  entries.unshift(entry);
+  saveEntries(entries);
+  resetForm();
+  renderAll();
+  window.scrollTo({top: document.body.scrollHeight, behavior:'smooth'});
+});
+
+function updateUserFilter(entries){
+  const sel = document.getElementById('filter-user');
+  const current = sel.value;
+  const users = Array.from(new Set(entries.map(e => e.user))).sort();
+  sel.innerHTML = '<option value="all">전체 보기</option>' +
+    users.map(u => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join('');
+  if(users.includes(current)) sel.value = current;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function renderEntries(){
+  const entries = loadEntries();
+  const filter = document.getElementById('filter-user').value;
+  const list = document.getElementById('entry-list');
+  const filtered = filter === 'all' ? entries : entries.filter(e => e.user === filter);
+
+  if(filtered.length === 0){
+    list.innerHTML = '<div class="empty">아직 기록이 없어요. 위에서 첫 기록을 남겨보세요.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(e => {
+    const tags = [...e.aroma.map(a=>`<span class="tag">${escapeHtml(a)}</span>`),
+                  ...e.taste.map(t=>`<span class="tag">${escapeHtml(t)}</span>`)].join('');
+    const titleParts = [e.type, e.brand].filter(Boolean).join(' · ');
+    return `
+      <div class="entry">
+        <div class="entry-top">
+          <div>
+            <div class="entry-title">${escapeHtml(titleParts)}</div>
+            <div class="entry-sub">${escapeHtml(e.date)}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="entry-user">${escapeHtml(e.user)}</span>
+            <button class="del-btn" onclick="deleteEntry('${e.id}')" aria-label="삭제"><i>✕</i></button>
+          </div>
+        </div>
+        ${tags ? `<div class="entry-tags">${tags}</div>` : ''}
+        <div class="entry-grid">
+          ${e.color ? `<div><b>탕색</b> ${escapeHtml(e.color)}</div>` : ''}
+          ${e.yeopjeo ? `<div><b>엽저</b> ${escapeHtml(e.yeopjeo)}</div>` : ''}
+          ${e.texture ? `<div><b>질감</b> ${escapeHtml(e.texture)}</div>` : ''}
+          ${e.aftertaste ? `<div><b>여운</b> ${escapeHtml(e.aftertaste)}</div>` : ''}
+          <div><b>떫은 정도</b> ${e.astringency} / 5</div>
+        </div>
+        ${e.note ? `<div class="entry-note">${escapeHtml(e.note)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteEntry(id){
+  if(!confirm('이 기록을 삭제할까요?')) return;
+  const entries = loadEntries().filter(e => e.id !== id);
+  saveEntries(entries);
+  renderAll();
+}
+
+function renderAll(){
+  const entries = loadEntries();
+  updateUserFilter(entries);
+  renderEntries();
+}
+
+document.getElementById('filter-user').addEventListener('change', renderEntries);
+
+renderAll();
+</script>
+
+</body>
+</html>
